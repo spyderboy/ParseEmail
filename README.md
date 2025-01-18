@@ -1,6 +1,5 @@
 # ParseEmail
 A Node microservice to accept the body of a URL, scrape the header of that destination, and then send values to a REST API
-# API Usage Guide: Email Link Scraper
 
 ## Prerequisites
 
@@ -17,7 +16,10 @@ The API will run on `http://localhost:3000` by default.
 `POST`
 
 ### Description
-This endpoint accepts the body of an email, extracts the first link, scrapes the webpage for metadata (title and description), and returns the information.
+This endpoint accepts the body of an email, extracts the first link, scrapes the webpage for metadata (title and description), and sends the metadata to an external REST API.
+
+### External API Endpoint
+The external REST API endpoint is defined as a constant in the code (`API_ENDPOINT`). Update the value of `API_ENDPOINT` in the code to the desired endpoint.
 
 ### Request Body
 The request must contain a JSON object with the following key:
@@ -34,16 +36,21 @@ The request must contain a JSON object with the following key:
 ### Response
 A successful response returns a JSON object containing:
 
-- `title` (string): The title of the webpage.
-- `description` (string): The description of the webpage.
-- `url` (string): The extracted URL from the email body.
+- `message` (string): A confirmation message indicating success.
+- `apiResponse` (object): The response received from the external REST API.
 
 #### Example
 ```json
 {
-  "title": "The Example Title",
-  "description": "This is an example description of the webpage.",
-  "url": "https://www.amazon.com/gp/video/detail/B0CH99VGR8/ref=atv_dp_share_cu_r"
+  "message": "Meta data sent successfully.",
+  "apiResponse": {
+    "status": "success",
+    "data": {
+      "id": 12345,
+      "title": "The Example Title",
+      "description": "This is an example description of the webpage."
+    }
+  }
 }
 ```
 
@@ -95,7 +102,5 @@ curl -X POST http://localhost:3000/api/parse-email \
 - Ensure the server is running before making requests.
 - The API only extracts the first valid link found in the email body.
 - The extracted webpage must be publicly accessible for the API to retrieve metadata.
-
-## Contact
-For issues or questions, please contact the developer or refer to the project documentation.
+- Update `API_ENDPOINT` in the source code to specify the external API where metadata should be sent.
 
