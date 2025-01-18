@@ -21,10 +21,10 @@ function extractLink(emailText) {
 // REST API to process email body
 app.post('/api/parse-email', async (req, res) => {
     try {
-        const { emailBody } = req.body;
+        const { emailBody, senderEmail } = req.body;
 
-        if (!emailBody) {
-            return res.status(400).json({ error: 'emailBody is required.' });
+        if (!emailBody || !senderEmail) {
+            return res.status(400).json({ error: 'emailBody and senderEmail are required.' });
         }
 
         // Extract link from email body
@@ -40,11 +40,12 @@ app.post('/api/parse-email', async (req, res) => {
         const title = $('meta[property="og:title"]').attr('content') || $('title').text();
         const description = $('meta[property="og:description"]').attr('content') || '';
 
-        // Send the meta data to the external REST API
+        // Send the meta data and sender email to the external REST API
         const apiResponse = await axios.post(API_ENDPOINT, {
             title,
             description,
             url: link,
+            senderEmail,
         });
 
         // Return the response from the external API
