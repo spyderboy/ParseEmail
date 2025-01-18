@@ -1,6 +1,10 @@
 // Import required libraries
 const express = require('express');
 const axios = require('axios');
+const headers = {
+  "User-Agent":
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36",
+};
 const cheerio = require('cheerio');
 const bodyParser = require('body-parser');
 
@@ -34,7 +38,9 @@ app.post('/api/parse-email', async (req, res) => {
         }
 
         // Scrape the link for meta tags
-        const response = await axios.get(link);
+        const response = await axios.get(link, {
+            headers,
+        });
         const $ = cheerio.load(response.data);
 
         const title = $('meta[property="og:title"]').attr('content') || $('title').text();
